@@ -6,6 +6,9 @@ import React, { Component } from "react";
 import Splash from './screens/SplashScreen';
 import 'react-native-gesture-handler';
 import Navigator from './Navigator/AppNavigator';
+import Core from './Navigator/Screens';
+import firebase, { auth } from "firebase";
+import config from './config/firebase';
 import { 
     View,
     Text,
@@ -14,7 +17,17 @@ import {
 } from "react-native";
 
 class Main extends Component {
-
+componentWillMount(){
+    firebase.auth().onAuthStateChanged((usr)=>{
+        if(usr){
+        this.setState({
+            logginIn:true
+        })
+    }
+    })
+   
+ 
+}
 
 
     constructor(props){
@@ -44,8 +57,13 @@ class Main extends Component {
         {Platform.OS === "ios" &&     <StatusBar barStyle = "light-content"  backgroundColor="#FFFF" />}
         if (this.state.timePassed==false)
             return <Splash />
-            else
-            return <Navigator />
+        
+            else{
+            if(this.state.logginIn)
+                return  <Core/>
+            else 
+                return <Navigator />
+            }
         
     }
 }

@@ -6,9 +6,43 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
+import firebase, { auth } from "firebase";
+import config from '../config/firebase';
 export default class SignUpScreen extends React.Component {
+
+  state = {
+  email :null,
+  password : null,
+  }
+
+  Signup = ()=>{
+   if(this.state.email == null && this.state.password == null){
+        Alert.alert("Error","All fields are mandatory")
+      return;
+      }
+      try{
+        firebase
+        .auth()
+        .createUserWithEmailAndPassword
+        (this.state.email,this.state.password).
+        catch((error) => Alert.alert(error.toString(error)))
+        .then((user) => {
+            console.log(user);
+            Alert.alert("Account Created");
+            this.props.navigation.navigate('Home')
+
+        });
+    }catch (error) {
+        console.log(error.toString(error));
+      }
+
+
+
+   
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -19,6 +53,7 @@ export default class SignUpScreen extends React.Component {
             placeholderTextColor={'#BDC7D4'}
             placeholder={'Email'}
             style={styles.emailField}
+            onChangeText={(email)=>{this.setState({email})}}
           />
           <View>
             <TextInput
@@ -27,12 +62,13 @@ export default class SignUpScreen extends React.Component {
               placeholderTextColor={'#BDC7D4'}
               placeholder={'Password'}
               style={styles.pwdField}
+              onChangeText={(password)=>{this.setState({password})}}
             />
             <View>
               <TouchableOpacity
                 style={styles.signButton}
                 activeOpacity={0.5}
-                onPress={() => this.props.navigation.navigate('Login')}>
+                onPress={this.Signup}>
                 <Text style={styles.btnTxt}> Sign up </Text>
               </TouchableOpacity>
               <View>
